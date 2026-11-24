@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WHT · QUANT TRADER</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      color: #ffffff;
+      font-family: "Courier New", Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .brand-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+
+    /* WHT en bloque ASCII de fórmulas matemáticas mutando */
+    #whtAscii {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0.12em;
+      color: #888888;
+      white-space: pre;
+      text-align: center;
+      display: inline-block;
+    }
+
+    /* QUANT TRADER: Texto sólido, fijo, sin animación */
+    .brand-sub {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.38em;
+      padding-left: 0.38em;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .projects-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .project-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 10px 22px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      background: #000000;
+    }
+
+    .project-link:hover {
+      color: #000000;
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    /* Botón Hack Rojo */
+    .project-link.htv-btn {
+      color: #ff3352;
+      border-color: rgba(229, 25, 55, 0.65);
+    }
+
+    .project-link.htv-btn:hover {
+      color: #ffffff;
+      background: #e51937;
+      border-color: #e51937;
+      box-shadow: 0 0 18px rgba(229, 25, 55, 0.45);
+    }
+
+    .social-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .social-links a {
+      color: rgba(255, 255, 255, 0.48);
+      text-decoration: none;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .social-links a:hover {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .perf-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .perf-label {
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .perf-group a {
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 700;
+      padding: 2px 4px;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .perf-group a:hover {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .sep {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.65rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CONTENEDOR CENTRAL: QUANT TRADER ARRIBA Y WHT MUTANDO EN GRIS ABAJO -->
+  <div class="brand-container">
+    <div class="brand-sub">QUANT TRADER</div>
+    <pre id="whtAscii"></pre>
+  </div>
+
+  <!-- BOTONES DE PROYECTOS -->
+  <div class="projects-group">
+    <a class="project-link" href="orderbook-odyssey.html">Orderbook Odyssey</a>
+    <a class="project-link" href="quant-nocturne.html">Quant Nocturne</a>
+    <a class="project-link htv-btn" href="wht-htv.html">WHT HTV</a>
+  </div>
+
+  <!-- ENLACES SOCIALES -->
+  <div class="social-links">
+    <a href="https://www.youtube.com/@whitehatrader" target="_blank" rel="noopener noreferrer">YouTube</a>
+    <span class="sep">·</span>
+    <a href="https://www.instagram.com/whitehatrader/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    <span class="sep">·</span>
+    <a href="https://t.me/Whitehatrader" target="_blank" rel="noopener noreferrer">Telegram</a>
+    <span class="sep">·</span>
+    <span class="perf-group">
+      <span class="perf-label">Performance</span>
+      <a href="https://ctrader.com/es/profile/Whitehatrader" target="_blank" rel="noopener noreferrer" title="cTrader Profile I">I</a>
+      <span class="sep" style="opacity:0.35">·</span>
+      <a href="https://community.ctrader.com/u/MATUSWHT/" target="_blank" rel="noopener noreferrer" title="cTrader Profile II">II</a>
+    </span>
+  </div>
+
+  <script>
+    const el = document.getElementById("whtAscii");
+
+    // Símbolos matemáticos cuantitativos de un solo carácter
+    const MATH_SYMBOLS = [
+      "∫", "∑", "∂", "√", "σ", "μ", "λ", "Δ", "∇", "π", "∞", "ρ", "α", "β",
+      "θ", "γ", "ν", "τ", "Φ", "z", "x", "y", "t", "δ", "ε", "ψ", "ω", "±", "≈", "≠"
+    ];
+
+    // Matriz de caracteres para W H T en bloques nítidos y perfectamente legibles
+    // 1 = celda donde va un símbolo matemático mutante
+    // 0 = espacio vacío
+    const PATTERN = [
+      "11     11    11   11    111111111",
+      "11     11    11   11       111   ",
+      "11  1  11    1111111       111   ",
+      "11 111 11    1111111       111   ",
+      "111   111    11   11       111   ",
+      "11     11    11   11       111   "
+    ];
+
+    const rows = PATTERN.length;
+    const cols = PATTERN[0].length;
+
+    // Estado de símbolos actuales para cada celda
+    const currentSymbols = [];
+    for (let r = 0; r < rows; r++) {
+      currentSymbols[r] = [];
+      for (let c = 0; c < cols; c++) {
+        currentSymbols[r][c] = MATH_SYMBOLS[Math.floor(Math.random() * MATH_SYMBOLS.length)];
+      }
+    }
+
+    function renderAscii() {
+      let output = "";
+      for (let r = 0; r < rows; r++) {
+        let line = "";
+        for (let c = 0; c < cols; c++) {
+          if (PATTERN[r][c] === "1") {
+            // Con probabilidad del 15% mutamos el símbolo en este frame para movimiento orgánico
+            if (Math.random() < 0.15) {
+              currentSymbols[r][c] = MATH_SYMBOLS[Math.floor(Math.random() * MATH_SYMBOLS.length)];
+            }
+            line += currentSymbols[r][c];
+          } else {
+            line += " ";
+          }
+        }
+        output += line + (r < rows - 1 ? "\n" : "");
+      }
+      el.textContent = output;
+    }
+
+    // Mutación continua a ~20 FPS para un efecto visual fluido de cálculo cuántico
+    setInterval(renderAscii, 55);
+    renderAscii();
+  </script>
+</body>
+</html>

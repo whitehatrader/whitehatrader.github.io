@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WHT · QUANT NOCTURNE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        .mono {
+            font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Escenario compacto centrado SIN FRAME (se funde en negro puro) */
+        #stage {
+            position: relative;
+            width: 50vw;
+            height: 50vh;
+            min-width: 360px;
+            min-height: 270px;
+            background: #000;
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        #wave-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Bloque único izquierdo flotando sin recuadro */
+        #stage-top {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            pointer-events: none;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
+        }
+        .market-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.20em;
+            color: rgba(255, 255, 255, 0.92);
+        }
+        .price-inline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: 1px;
+        }
+        #price-badge {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.02em;
+        }
+        #return-badge {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        #return-badge.neg { color: #ef4444; }
+        #asset-subtitle {
+            font-size: 9.5px;
+            color: rgba(255, 255, 255, 0.44);
+            letter-spacing: 0.05em;
+        }
+        .music-inline {
+            font-size: 9.5px;
+            color: rgba(255, 255, 255, 0.54);
+            margin-top: 1px;
+        }
+        .music-inline strong { color: rgba(255, 255, 255, 0.92); font-weight: 600; }
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .dot.up { background: #10b981; }
+        .dot.down { background: #ef4444; }
+
+        /* Todo el bloque de datos/música/fórmulas flotando a la izquierda SIN RECUADRO (toggleable con ∑) */
+        #math-panel {
+            width: 240px;
+            font-size: 9.5px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 2px;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        #math-panel.open { display: flex; }
+        .math-head {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.42);
+            padding-bottom: 2px;
+            font-size: 8.5px;
+            letter-spacing: 0.14em;
+            font-weight: 600;
+        }
+        .math-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2px 8px;
+            color: rgba(255, 255, 255, 0.56);
+        }
+        .math-val { color: rgba(255, 255, 255, 0.92); text-align: right; }
+        .math-val.up { color: #10b981; }
+        .math-val.warn { color: #ef4444; }
+        .math-foot {
+            padding-top: 2px;
+            font-size: 8.5px;
+            color: rgba(255, 255, 255, 0.46);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Menú y línea de tiempo semitransparentes con auto-ocultado rápido */
+        #stage-hud {
+            position: absolute;
+            bottom: 8px;
+            left: 10px;
+            right: 10px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: none;
+        }
+        #controls-fade {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+        }
+        #controls-fade.visible {
+            opacity: 0.72;
+            pointer-events: auto;
+        }
+        #controls-fade.visible:hover {
+            opacity: 0.92;
+        }
+
+        .stage-status {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 9.5px;
+            color: rgba(255, 255, 255, 0.52);
+            pointer-events: none;
+            padding: 0 4px;
+        }
+        #day-counter {
+            font-size: 9.5px;
+            font-style: italic;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.58);
+            line-height: 1.2;
+        }
+        #brand-wht {
+            position: fixed;
+            bottom: 14px;
+            right: 18px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            color: rgba(255, 255, 255, 0.25);
+            z-index: 9999;
+            user-select: none;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease, opacity 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+        }
+        #brand-wht:hover {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .timeline-wrap {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .timeline-track {
+            width: 100%;
+            height: 1.5px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        #timeline-progress {
+            height: 100%;
+            width: 0%;
+            background: rgba(255, 255, 255, 0.55);
+        }
+        #timeline-slider {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .menu-box {
+            background: transparent;
+            border: none;
+            padding: 2px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .genres-dock {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-bottom: 3px;
+            pointer-events: auto;
+        }
+        .genres-dock .genre-btn {
+            background: rgba(14, 14, 18, 0.45);
+            color: rgba(255, 255, 255, 0.52);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(10px);
+            padding: 4px 13px;
+            font-size: 9.5px;
+            font-weight: 500;
+            letter-spacing: 0.07em;
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .genres-dock .genre-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+        .genres-dock .genre-btn.active {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 2px 14px rgba(255, 255, 255, 0.20);
+        }
+        .v-divider {
+            display: inline-block;
+            width: 1px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 0 2px;
+        }
+        .menu-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .menu-row::-webkit-scrollbar { display: none; }
+        .pill-group {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+        .btn {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: 9.5px;
+            font-weight: 500;
+            font-family: inherit;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.12s, color 0.12s, border-color 0.12s;
+        }
+        .btn:hover { color: #fff; background: rgba(255, 255, 255, 0.10); border-color: rgba(255, 255, 255, 0.28); }
+        .btn.active {
+            background: rgba(255, 255, 255, 0.78);
+            color: #000;
+            border-color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+        }
+        .btn-play {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.85);
+            border-color: rgba(255, 255, 255, 0.25);
+            padding: 3px 10px;
+            font-weight: 600;
+        }
+        .speed-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.62);
+        }
+        #speed-slider {
+            width: 52px;
+            height: 3px;
+            accent-color: #10b981;
+            cursor: pointer;
+        }
+
+        /* Pantalla de inicio dentro de #stage */
+        #start-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 40;
+            background: rgba(0, 0, 0, 0.90);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        #start-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .start-brand {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            color: rgba(255, 255, 255, 0.48);
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            padding: 3px 14px;
+            border-radius: 999px;
+            margin-bottom: 2px;
+        }
+        .start-title {
+            font-size: clamp(17px, 2.5vw, 24px);
+            font-weight: 700;
+            letter-spacing: 0.20em;
+            color: #fff;
+        }
+        .start-sub {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.65);
+            max-width: 340px;
+            line-height: 1.45;
+        }
+        .start-cta {
+            margin-top: 4px;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: #fff;
+            color: #000;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Modal explicativo bilingüe (ES / EN) */
+        #info-modal {
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        #info-modal.open { display: flex; }
+        .info-box {
+            background: #060608;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 620px;
+            height: auto;
+            max-height: 86vh;
+            overflow-y: auto;
+            padding: 18px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 10.5px;
+            line-height: 1.52;
+            color: rgba(255, 255, 255, 0.78);
+            margin: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
+            text-align: center;
+        }
+        .info-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+            padding-bottom: 8px;
+            color: #fff;
+            text-align: left;
+        }
+        .info-sec-title {
+            color: #10b981;
+            font-size: 9.5px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .info-list {
+            list-style: none;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: left;
+            margin: 0 auto;
+            max-width: 520px;
+        }
+        .info-list strong { color: #fff; }
+
+        /* Adaptación móvil */
+        @media (max-width: 768px) {
+            #stage {
+                width: 94vw;
+                height: 74vh;
+                min-width: 280px;
+                min-height: 360px;
+            }
+            .btn { padding: 5px 9px; font-size: 10px; }
+            .btn-play { padding: 5px 11px; }
+        }
+    </style>
+</head>
+<body>
+    <a id="brand-wht" href="index.html" title="Volver a WHT">WHT</a>
+
+    <div id="stage">
+        <canvas id="wave-canvas"></canvas>
+
+        <div id="stage-top">
+            <!-- Todo el bloque Quant + Mercado + Música flotando a la izquierda sin recuadro (aparece al pulsar ∑) -->
+            <section id="math-panel" class="mono">
+                <div class="price-inline">
+                    <span id="status-dot" class="dot"></span>
+                    <span id="price-badge">$4,005.00</span>
+                    <span id="return-badge">+0.00%</span>
+                    <span id="asset-subtitle">XAU/USD · ÚLTIMO AÑO (1Y)</span>
+                </div>
+                <div class="music-inline">
+                    <strong id="expression-badge">NEOCLÁSICA · Am</strong> ·
+                    <span id="dynamic-badge">mp</span> ·
+                    <span data-i18n="noteLbl">NOTA</span> <strong id="val-note">A4</strong> ·
+                    ♩=<strong id="val-bpm">96</strong> ·
+                    σ <strong id="val-volat">0.85%</strong>
+                </div>
+                <div class="math-head" style="margin-top:3px;">
+                    <span>∑ QUANT → AUDIO</span>
+                    <span>1Y · N=25</span>
+                </div>
+                <div class="math-grid">
+                    <span>r_t = ln(C/C_1)</span><span id="math-ret" class="math-val up">+0.0000</span>
+                    <span>σ = √μ₂ → bpm</span><span id="math-std" class="math-val">0.50%</span>
+                    <span>S = μ₃/σ³ → modo</span><span id="math-skew" class="math-val">+0.00</span>
+                    <span>K = μ₄/σ⁴ → shock</span><span id="math-kurt" class="math-val">3.00</span>
+                    <span>ρ₁ = γ₁/σ² → giro</span><span id="math-acf" class="math-val">+0.00</span>
+                    <span>z_t = |r-μ|/σ</span><span id="math-z" class="math-val">0.50σ</span>
+                </div>
+                <div class="math-foot" id="math-fractal-params">WAVE·STAFF · E4</div>
+                <div class="math-foot" id="math-rule-line">σ&lt;0.55% → AMBIENT · Am9</div>
+            </section>
+        </div>
+
+        <!-- Overlay inicial -->
+        <div id="start-overlay">
+            <div class="start-brand">QUANT NOCTURNE</div>
+            <div class="start-title" data-i18n="startTitle">¿EL MERCADO TIENE MELODÍA?</div>
+            <p class="start-sub" data-i18n="startSub">
+                Melodías generativas basadas en cálculos cuantitativos.
+            </p>
+            <button id="btn-start-overlay" class="start-cta" data-i18n="startCta">▶ INICIAR</button>
+        </div>
+
+        <!-- Menú y Timeline semitransparentes (desaparecen rápidamente al no interactuar) -->
+        <div id="stage-hud">
+            <div class="stage-status">
+                <span id="day-counter">lunes 3 noviembre 2025</span>
+            </div>
+
+            <div id="controls-fade">
+                <!-- Melodías flotantes centradas y minimalistas en la zona superior señalada -->
+                <div class="genres-dock">
+                    <button data-genre="neoclassical" class="btn genre-btn active">NEOCLÁSICA</button>
+                    <button data-genre="ambient" class="btn genre-btn">AMBIENT</button>
+                    <button data-genre="dark_jazz" class="btn genre-btn">DARK JAZZ</button>
+                    <button data-genre="deep_house" class="btn genre-btn">DEEP HOUSE</button>
+                </div>
+
+                <div class="timeline-wrap">
+                    <div class="timeline-track">
+                        <div id="timeline-progress"></div>
+                    </div>
+                    <input id="timeline-slider" type="range" min="0" max="251" value="0">
+                </div>
+
+                <div class="menu-box">
+                    <div class="menu-row">
+                        <div class="pill-group">
+                            <button id="btn-play" class="btn btn-play" title="Play / Pausa">
+                                <span id="play-indicator" class="dot up"></span>
+                                <span id="btn-play-icon" style="font-size:10px;display:inline-block;min-width:10px;text-align:center;">▶</span>
+                            </button>
+                            <button id="btn-stop" class="btn" title="Stop (Inicio)"><span style="font-size:10px;">■</span></button>
+                            <span class="v-divider"></span>
+                            <button data-asset="xau" class="btn asset-btn active">XAU</button>
+                            <button data-asset="oil" class="btn asset-btn">WTI</button>
+                            <button data-asset="btc" class="btn asset-btn">BTC</button>
+                            <button data-asset="sp500" class="btn asset-btn">SPX</button>
+                            <button data-asset="nq" class="btn asset-btn">NQ</button>
+                        </div>
+                        <div class="pill-group">
+                            <div class="speed-wrap mono" title="Ritmo / Tempo">
+                                <input id="speed-slider" type="range" min="0.5" max="1.8" step="0.05" value="1.0">
+                                <span id="speed-val">1.0x</span>
+                            </div>
+                            <span class="v-divider"></span>
+                            <button id="btn-toggle-chart" class="btn active" title="Mostrar / ocultar gráfico" style="font-size:11px;padding:2px 9px;">∿</button>
+                            <button id="btn-toggle-math" class="btn" title="Matemática Quant" style="font-size:11px;padding:2px 9px;">∑</button>
+                            <button id="btn-info-modal" class="btn">i</button>
+                            <button id="btn-lang" class="btn">EN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Guía Completa (ES / EN) dentro del escenario -->
+        <div id="info-modal">
+            <div class="info-box">
+                <div class="info-head">
+                    <span data-i18n="infoTitle">QUANT NOCTURNE · CÓMO FUNCIONA</span>
+                    <div style="display:flex;gap:5px;">
+                        <button id="btn-info-lang" class="btn">EN</button>
+                        <button id="btn-close-info" class="btn">✕</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="info-sec-title" data-i18n="infoWhatTitle">1. QUÉ HACE</div>
+                    <p data-i18n="infoWhatBody"></p>
+                </div>
+                <div>
+                    <div class="info-sec-title" data-i18n="infoDataTitle">2. DATOS DEL ÚLTIMO AÑO (1Y)</div>
+                    <p data-i18n="infoDataBody"></p>
+                </div>
+                <div>
+                    <div class="info-sec-title" data-i18n="infoMathTitle">3. MATEMÁTICA QUANT (VENTANA N=25)</div>
+                    <ul class="info-list" id="info-math-list"></ul>
+                </div>
+                <div>
+                    <div class="info-sec-title" data-i18n="infoSoundTitle">4. CÓMO SUENA CADA RÉGIMEN</div>
+                    <ul class="info-list" id="info-sound-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script src="nocturne.min.js"></script>
+</body>
+</html>

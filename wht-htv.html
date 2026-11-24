@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WHT HTV · HACKS TV</title>
+  <link rel="icon" type="image/png" href="icon48.png" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: #000000;
+      color: #ffffff;
+      font-family: "Courier New", Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      user-select: none;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 26px;
+    }
+
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: 0.42em;
+      padding-left: 0.42em;
+      line-height: 1;
+    }
+
+    .subtitle {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.34em;
+      padding-left: 0.34em;
+      color: #e51937;
+      text-transform: uppercase;
+    }
+
+    .desc {
+      font-size: 0.74rem;
+      line-height: 1.75;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.56);
+      max-width: 420px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .chrome-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #ffffff;
+      background: rgba(229, 25, 55, 0.14);
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      border: 1px solid #e51937;
+      padding: 13px 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chrome-btn:hover {
+      color: #ffffff;
+      background: #e51937;
+      box-shadow: 0 0 22px rgba(229, 25, 55, 0.4);
+    }
+
+    .chrome-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
+
+    .meta-note {
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.34);
+    }
+
+    .features {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .feat {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      padding: 11px 12px;
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      transition: border-color 0.2s ease;
+    }
+
+    .feat:hover {
+      border-color: rgba(229, 25, 55, 0.55);
+    }
+
+    .drawings-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #ff3352;
+      border: 1px solid rgba(229, 25, 55, 0.45);
+      background: rgba(229, 25, 55, 0.08);
+      padding: 7px 22px;
+      border-radius: 20px;
+      margin-top: 2px;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .drawings-badge:hover {
+      border-color: #ff3352;
+      box-shadow: 0 0 14px rgba(229, 25, 55, 0.35);
+    }
+
+    .guide-details {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      transition: border-color 0.2s ease;
+    }
+
+    .guide-details[open] {
+      border-color: rgba(229, 25, 55, 0.45);
+    }
+
+    .guide-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 18px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff3352;
+      background: rgba(229, 25, 55, 0.06);
+      transition: all 0.2s ease;
+    }
+
+    .guide-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .guide-summary:hover {
+      background: rgba(229, 25, 55, 0.14);
+      color: #ffffff;
+    }
+
+    .summary-arrow {
+      font-size: 0.65rem;
+      transition: transform 0.25s ease;
+    }
+
+    .guide-details[open] .summary-arrow {
+      transform: rotate(180deg);
+    }
+
+    .guide-content {
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .guide-step {
+      font-size: 0.7rem;
+      line-height: 1.65;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .guide-step b {
+      color: #ffffff;
+    }
+
+    .guide-step code {
+      color: #ff4762;
+      background: rgba(229, 25, 55, 0.14);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+
+    .guide-img {
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid rgba(229, 25, 55, 0.35);
+      display: block;
+      cursor: zoom-in;
+      transition: border-color 0.2s ease;
+    }
+
+    .guide-img:hover {
+      border-color: #e51937;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 9999;
+      cursor: zoom-out;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 94vw;
+      max-height: 90vh;
+      border-radius: 6px;
+      border: 1px solid #e51937;
+    }
+
+    .guide-done {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 10px;
+    }
+
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 8px 18px;
+      border-radius: 6px;
+      margin-top: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #000000;
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    .social-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .social-links a {
+      color: rgba(255, 255, 255, 0.48);
+      text-decoration: none;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .social-links a:hover {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .perf-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .perf-label {
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .perf-group a {
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 700;
+      padding: 2px 4px;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .perf-group a:hover {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
+    }
+
+    .sep {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 0.65rem;
+    }
+
+    @media (max-width: 480px) {
+      .brand {
+        font-size: 2rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <div class="brand-group">
+      <div class="brand">WHT HTV</div>
+      <div class="subtitle">HACKS TV · CHROME EXTENSION</div>
+    </div>
+
+    <div class="actions">
+      <a id="chrome-install-btn" class="chrome-btn" href="WHT-HTV.exe" download="WHT-HTV.exe">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v12M7 10l5 5 5-5M4 19h16" />
+        </svg>
+        <span>Descargar Instalador (.exe)</span>
+      </a>
+      <div class="meta-note">Windows · Chrome / Brave / Edge · v4.3.0</div>
+    </div>
+
+    <div id="drawingsBadge" class="drawings-badge">ALL DRAWINGS</div>
+
+    <div class="features">
+      <div class="feat">Volume Profile · FRVP</div>
+      <div class="feat">VWAP · RTH / ETH / ON</div>
+      <div class="feat" id="featZonas">Zonas HVN / LVN</div>
+      <div class="feat" id="featDibujo">Dibujo Anclado · TV</div>
+    </div>
+
+    <details class="guide-details" id="guideDetails">
+      <summary class="guide-summary">
+        <span id="guideSummaryText">Guía de instalación rápida</span>
+        <span class="summary-arrow">▼</span>
+      </summary>
+      <div class="guide-content">
+        <div class="guide-step" id="step1"><b>1.</b> Ejecuta el instalador, elige donde guardar la carpeta y haz clic en
+          <b>Descomprimir</b>.
+        </div>
+        <div class="guide-step" id="step2"><b>2.</b> Abre Chrome y entra a <code>chrome://extensions/</code></div>
+        <img id="guide-thumb" class="guide-img" src="chrome-guide.png" alt="Guia chrome://extensions/"
+          title="Clic para agrandar" />
+        <div class="guide-step" id="step3"><b>3.</b> Activa <b>Modo de desarrollador</b> (arriba a la derecha), haz clic
+          en <b>Cargar extensión sin empaquetar</b> y selecciona la carpeta descomprimida.</div>
+        <div class="guide-done" id="step4">4. Actualiza la página de TradingView (F5) y listo.</div>
+      </div>
+    </details>
+
+    <a class="back-link" href="index.html">Volver a WHT</a>
+  </main>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <img src="chrome-guide.png" alt="Guia chrome://extensions/ ampliada" />
+  </div>
+  <script>
+    // Detección automática de idioma del navegador / computador
+    const userLang = (navigator.language || navigator.userLanguage || "es").toLowerCase();
+    const isEs = userLang.startsWith("es");
+
+    const badge = document.getElementById("drawingsBadge");
+    if (badge) {
+      badge.textContent = isEs ? "TODOS LOS DIBUJOS" : "ALL DRAWINGS";
+    }
+
+    const summaryText = document.getElementById("guideSummaryText");
+    if (summaryText) {
+      summaryText.textContent = isEs ? "Guía de instalación rápida" : "Quick installation guide";
+    }
+
+    const btnSpan = document.querySelector("#chrome-install-btn span");
+    if (btnSpan && !isEs) {
+      btnSpan.textContent = "Download Installer (.exe)";
+    }
+
+    const backLink = document.querySelector(".back-link");
+    if (backLink && !isEs) {
+      backLink.textContent = "Back to WHT";
+    }
+
+    if (!isEs) {
+      const featZonas = document.getElementById("featZonas");
+      if (featZonas) featZonas.textContent = "HVN / LVN Zones";
+      const featDibujo = document.getElementById("featDibujo");
+      if (featDibujo) featDibujo.textContent = "Anchored Drawing · TV";
+      const step1 = document.getElementById("step1");
+      if (step1) step1.innerHTML = "<b>1.</b> Run the installer, choose where to save the folder and click <b>Extract</b>.";
+      const step2 = document.getElementById("step2");
+      if (step2) step2.innerHTML = "<b>2.</b> Open Chrome and go to <code>chrome://extensions/</code>";
+      const step3 = document.getElementById("step3");
+      if (step3) step3.innerHTML = "<b>3.</b> Turn on <b>Developer mode</b> (top right), click <b>Load unpacked</b> and select the extracted folder.";
+      const step4 = document.getElementById("step4");
+      if (step4) step4.textContent = "4. Refresh TradingView (F5) and done.";
+    }
+
+    // Lightbox modal para ampliar captura
+    const thumb = document.getElementById("guide-thumb");
+    const lb = document.getElementById("lightbox");
+    if (thumb && lb) {
+      thumb.addEventListener("click", () => lb.classList.add("open"));
+      lb.addEventListener("click", () => lb.classList.remove("open"));
+      window.addEventListener("keydown", (e) => { if (e.key === "Escape") lb.classList.remove("open"); });
+    }
+  </script>
+</body>
+
+</html>
