@@ -1,0 +1,168 @@
+/* ==========================================================================
+   WHT · Theme System (Base compartida)
+   Editá las variables de :root para cambiar la estética de todo el sitio.
+   Probá variantes antes en: sandbox/theme-lab.html
+   ========================================================================== */
+
+:root {
+  /* Colores base (Tema actual: Terminal Classic) */
+  --bg: #000000;
+  --surface: rgba(4, 6, 10, 0.72);
+  --surface-strong: rgba(5, 7, 12, 0.94);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.65);
+  --text-dim: rgba(255, 255, 255, 0.45);
+  --border: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.34);
+
+  /* Acentos */
+  --accent: #19ff8c;
+  --accent-alt: #e51937;
+
+  /* Tipografía y geometría */
+  --font-main: "Courier New", Courier, monospace;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --tracking-tight: 0.08em;
+  --tracking-wide: 0.24em;
+  --tracking-brand: 0.38em;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Layout centrado estándar */
+.wht-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 28px;
+}
+
+.wht-wrap {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+}
+
+/* Marca y títulos */
+.wht-brand {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: var(--tracking-brand);
+  padding-left: var(--tracking-brand);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.wht-subtitle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  padding-left: var(--tracking-wide);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Paneles / Tarjetas / HUD */
+.wht-panel {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  text-align: left;
+}
+
+.wht-panel-title {
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.wht-text {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.wht-metric {
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: var(--tracking-tight);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Botones */
+.wht-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-main);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.wht-btn:hover {
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wht-btn--accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.wht-btn--accent:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.wht-back {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.wht-back:hover {
+  color: var(--text);
+}

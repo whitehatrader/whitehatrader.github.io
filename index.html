@@ -4,26 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WHT · QUANT TRADER</title>
+  <link rel="icon" type="image/png" href="assets/icon48.png" />
+  <link rel="stylesheet" href="assets/theme.css" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     html, body {
-      width: 100%;
-      height: 100%;
-      background: #000000;
-      color: #ffffff;
-      font-family: "Courier New", Courier, monospace;
+      min-height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 28px;
+      padding: 36px 20px;
       user-select: none;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .brand-container {
@@ -32,19 +25,23 @@
       align-items: center;
       justify-content: center;
       gap: 22px;
+      max-width: 100%;
+      text-decoration: none;
+      cursor: pointer;
     }
 
     /* WHT en bloque ASCII de fórmulas matemáticas mutando */
     #whtAscii {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 1.15rem;
+      font-family: var(--font-main);
+      font-size: clamp(0.52rem, 3.3vw, 1.15rem);
       font-weight: 700;
       line-height: 1.15;
-      letter-spacing: 0.12em;
-      color: #888888;
+      letter-spacing: clamp(0.02em, 0.32vw, 0.12em);
+      color: var(--text-muted);
       white-space: pre;
       text-align: center;
       display: inline-block;
+      max-width: 100%;
     }
 
     /* QUANT TRADER: Texto sólido, fijo, sin animación */
@@ -53,38 +50,94 @@
       font-weight: 700;
       letter-spacing: 0.38em;
       padding-left: 0.38em;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--text-muted);
       text-transform: uppercase;
       text-align: center;
       margin-bottom: 6px;
     }
 
+    .section-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      padding-left: 0.28em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .catalog-wrap {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      font-family: var(--font-main);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      color: var(--text);
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
     .projects-group {
       display: flex;
-      gap: 14px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-top: 6px;
+      align-items: flex-start;
+      align-content: flex-start;
+      min-height: 70px;
     }
 
     .project-link {
-      color: #ffffff;
+      color: var(--text);
       text-decoration: none;
-      font-size: 0.76rem;
+      font-size: 0.66rem;
       font-weight: 700;
-      letter-spacing: 0.24em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      padding: 10px 22px;
-      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      padding: 6px 14px;
+      border-radius: 4px;
       transition: all 0.2s ease;
-      background: #000000;
+      background: var(--bg);
     }
 
     .project-link:hover {
-      color: #000000;
-      background: #ffffff;
-      border-color: #ffffff;
+      color: var(--bg);
+      background: var(--text);
+      border-color: var(--text);
     }
 
     /* Botón Hack Rojo */
@@ -95,9 +148,17 @@
 
     .project-link.htv-btn:hover {
       color: #ffffff;
-      background: #e51937;
-      border-color: #e51937;
+      background: var(--accent-alt);
+      border-color: var(--accent-alt);
       box-shadow: 0 0 18px rgba(229, 25, 55, 0.45);
+    }
+
+    .empty-cat {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      padding: 8px 0;
     }
 
     .social-links {
@@ -106,10 +167,11 @@
       gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
+      margin-top: 26px;
     }
 
     .social-links a {
-      color: rgba(255, 255, 255, 0.48);
+      color: var(--text-dim);
       text-decoration: none;
       font-size: 0.68rem;
       letter-spacing: 0.16em;
@@ -120,8 +182,8 @@
     }
 
     .social-links a:hover {
-      color: #ffffff;
-      border-bottom-color: rgba(255, 255, 255, 0.6);
+      color: var(--text);
+      border-bottom-color: var(--border-strong);
     }
 
     .perf-group {
@@ -131,14 +193,14 @@
     }
 
     .perf-label {
-      color: rgba(255, 255, 255, 0.48);
+      color: var(--text-dim);
       font-size: 0.68rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
 
     .perf-group a {
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--text-muted);
       font-weight: 700;
       padding: 2px 4px;
       border-bottom: 1px solid transparent;
@@ -146,12 +208,12 @@
     }
 
     .perf-group a:hover {
-      color: #ffffff;
-      border-bottom-color: #ffffff;
+      color: var(--text);
+      border-bottom-color: var(--text);
     }
 
     .sep {
-      color: rgba(255, 255, 255, 0.2);
+      color: var(--border);
       font-size: 0.65rem;
     }
   </style>
@@ -159,17 +221,16 @@
 <body>
 
   <!-- CONTENEDOR CENTRAL: QUANT TRADER ARRIBA Y WHT MUTANDO EN GRIS ABAJO -->
-  <div class="brand-container">
+  <a class="brand-container" href="index.html" title="Inicio WHT">
     <div class="brand-sub">QUANT TRADER</div>
     <pre id="whtAscii"></pre>
-  </div>
+  </a>
 
-  <!-- BOTONES DE PROYECTOS -->
-  <div class="projects-group">
-    <a class="project-link" href="orderbook-odyssey.html">Orderbook Odyssey</a>
-    <a class="project-link" href="quant-nocturne.html">Quant Nocturne</a>
-    <a class="project-link htv-btn" href="wht-htv.html">WHT HTV</a>
-  </div>
+  <!-- CATÁLOGO: FILTROS + PROYECTOS / ACCESOS DIRECTOS -->
+  <section class="catalog-wrap" aria-label="Proyectos y categorías">
+    <div id="filterBar" class="filter-bar"></div>
+    <div id="projectsGroup" class="projects-group"></div>
+  </section>
 
   <!-- ENLACES SOCIALES -->
   <div class="social-links">
@@ -187,18 +248,63 @@
     </span>
   </div>
 
+  <script src="assets/catalog.js"></script>
   <script>
+    /* --- Renderizado de Destacados (por defecto) y Filtros por categoría --- */
+    const filterBar = document.getElementById("filterBar");
+    const projectsGroup = document.getElementById("projectsGroup");
+    const categories = window.WHT_CATEGORIES || [];
+    const catalog = window.WHT_CATALOG || [];
+    let activeFilter = null; // null = muestra destacados al entrar
+
+    function renderFilters() {
+      filterBar.innerHTML = categories.map(cat => `
+        <button class="filter-btn${cat.id === activeFilter ? " active" : ""}" data-cat="${cat.id}">
+          ${cat.label}
+        </button>
+      `).join("");
+
+      filterBar.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const cat = btn.dataset.cat;
+          if (cat === "blog") {
+            window.location.href = "blog/";
+            return;
+          }
+          activeFilter = activeFilter === cat ? null : cat;
+          renderFilters();
+          renderProjects();
+        });
+      });
+    }
+
+    function renderProjects() {
+      const list = activeFilter === null
+        ? catalog.filter(p => p.featured)
+        : catalog.filter(p => p.category === activeFilter);
+
+      if (!list.length) {
+        projectsGroup.innerHTML = '<div class="empty-cat">Próximamente en esta categoría</div>';
+        return;
+      }
+
+      projectsGroup.innerHTML = list.map(p => {
+        const cls = p.accent === "red" ? "project-link htv-btn" : "project-link";
+        return `<a class="${cls}" href="${p.path}" title="${p.summary || p.title}">${p.title}</a>`;
+      }).join("");
+    }
+
+    renderFilters();
+    renderProjects();
+
+    /* --- Bloque ASCII WHT mutante --- */
     const el = document.getElementById("whtAscii");
 
-    // Símbolos matemáticos cuantitativos de un solo carácter
     const MATH_SYMBOLS = [
       "∫", "∑", "∂", "√", "σ", "μ", "λ", "Δ", "∇", "π", "∞", "ρ", "α", "β",
       "θ", "γ", "ν", "τ", "Φ", "z", "x", "y", "t", "δ", "ε", "ψ", "ω", "±", "≈", "≠"
     ];
 
-    // Matriz de caracteres para W H T en bloques nítidos y perfectamente legibles
-    // 1 = celda donde va un símbolo matemático mutante
-    // 0 = espacio vacío
     const PATTERN = [
       "11     11    11   11    111111111",
       "11     11    11   11       111   ",
@@ -211,7 +317,6 @@
     const rows = PATTERN.length;
     const cols = PATTERN[0].length;
 
-    // Estado de símbolos actuales para cada celda
     const currentSymbols = [];
     for (let r = 0; r < rows; r++) {
       currentSymbols[r] = [];
@@ -226,7 +331,6 @@
         let line = "";
         for (let c = 0; c < cols; c++) {
           if (PATTERN[r][c] === "1") {
-            // Con probabilidad del 15% mutamos el símbolo en este frame para movimiento orgánico
             if (Math.random() < 0.15) {
               currentSymbols[r][c] = MATH_SYMBOLS[Math.floor(Math.random() * MATH_SYMBOLS.length)];
             }
@@ -240,7 +344,6 @@
       el.textContent = output;
     }
 
-    // Mutación continua a ~20 FPS para un efecto visual fluido de cálculo cuántico
     setInterval(renderAscii, 55);
     renderAscii();
   </script>

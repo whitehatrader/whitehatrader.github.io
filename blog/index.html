@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WHT · BLOG &amp; LANZAMIENTOS</title>
+  <link rel="icon" type="image/png" href="../assets/icon48.png" />
+  <link rel="stylesheet" href="../assets/theme.css" />
+  <style>
+    .post-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .post-card {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .post-card:hover {
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.64rem;
+      letter-spacing: 0.18em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .post-tag {
+      color: var(--accent);
+    }
+
+    .post-title {
+      font-size: 0.86rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .empty-state {
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body class="wht-page">
+  <main class="wht-wrap">
+    <header>
+      <h1 class="wht-brand">BLOG</h1>
+      <p class="wht-subtitle">WHT · NUEVOS PROYECTOS Y NOTAS</p>
+    </header>
+
+    <section id="blogList" class="post-list"></section>
+
+    <a class="wht-back" href="../index.html">&larr; VOLVER A WHT</a>
+  </main>
+
+  <script src="../assets/catalog.js"></script>
+  <script>
+    const listEl = document.getElementById("blogList");
+    const items = (window.WHT_CATALOG || [])
+      .slice()
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+    if (!items.length) {
+      listEl.innerHTML = '<div class="empty-state">AÚN NO HAY ENTRADAS PUBLICADAS.</div>';
+    } else {
+      listEl.innerHTML = items.map(item => `
+        <a class="post-card" href="../${item.path}">
+          <div class="post-meta">
+            <span class="post-tag">${item.category}</span>
+            <span>${item.date || ""}</span>
+          </div>
+          <div class="post-title">${item.title}</div>
+          <p class="wht-text">${item.summary || ""}</p>
+        </a>
+      `).join("");
+    }
+  </script>
+</body>
+</html>
