@@ -110,6 +110,19 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
+    /* Categoría FUND en verde */
+    .filter-btn.fund-tab {
+      color: rgba(25, 255, 140, 0.78);
+    }
+    .filter-btn.fund-tab:hover {
+      color: #19ff8c;
+    }
+    .filter-btn.fund-tab.active {
+      color: #19ff8c;
+      border-color: rgba(25, 255, 140, 0.55);
+      background: rgba(25, 255, 140, 0.08);
+    }
+
     .projects-group {
       display: flex;
       gap: 10px;
@@ -151,6 +164,19 @@
       background: var(--accent-alt);
       border-color: var(--accent-alt);
       box-shadow: 0 0 18px rgba(229, 25, 55, 0.45);
+    }
+
+    /* Botón Fund Verde */
+    .project-link.fund-btn {
+      color: #19ff8c;
+      border-color: rgba(25, 255, 140, 0.65);
+    }
+
+    .project-link.fund-btn:hover {
+      color: #000000;
+      background: #19ff8c;
+      border-color: #19ff8c;
+      box-shadow: 0 0 18px rgba(25, 255, 140, 0.42);
     }
 
     .empty-cat {
@@ -212,6 +238,16 @@
       border-bottom-color: var(--text);
     }
 
+    .social-links a.sigma-link {
+      color: #19ff8c;
+      font-weight: 700;
+    }
+
+    .social-links a.sigma-link:hover {
+      color: #6bffb8;
+      border-bottom-color: #19ff8c;
+    }
+
     .sep {
       color: var(--border);
       font-size: 0.65rem;
@@ -246,6 +282,8 @@
       <span class="sep" style="opacity:0.35">·</span>
       <a href="https://community.ctrader.com/u/MATUSWHT/" target="_blank" rel="noopener noreferrer" title="cTrader Profile II">II</a>
     </span>
+    <span class="sep">·</span>
+    <a class="sigma-link" href="sigma-ii/" title="Fondo de Inversión Privado WHT SIGMA II">SIGMA II</a>
   </div>
 
   <script src="assets/catalog.js"></script>
@@ -258,11 +296,11 @@
     let activeFilter = null; // null = muestra destacados al entrar
 
     function renderFilters() {
-      filterBar.innerHTML = categories.map(cat => `
-        <button class="filter-btn${cat.id === activeFilter ? " active" : ""}" data-cat="${cat.id}">
-          ${cat.label}
-        </button>
-      `).join("");
+      filterBar.innerHTML = categories.map(cat => {
+        const extra = cat.accent === "green" ? " fund-tab" : "";
+        const act = cat.id === activeFilter ? " active" : "";
+        return `<button class="filter-btn${extra}${act}" data-cat="${cat.id}">${cat.label}</button>`;
+      }).join("");
 
       filterBar.querySelectorAll(".filter-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -289,7 +327,11 @@
       }
 
       projectsGroup.innerHTML = list.map(p => {
-        const cls = p.accent === "red" ? "project-link htv-btn" : "project-link";
+        const cls = p.accent === "red"
+          ? "project-link htv-btn"
+          : p.accent === "green"
+            ? "project-link fund-btn"
+            : "project-link";
         return `<a class="${cls}" href="${p.path}" title="${p.summary || p.title}">${p.title}</a>`;
       }).join("");
     }
